@@ -1,3 +1,3 @@
 /runs/
 
-/pycache/
+/__pycache__/
