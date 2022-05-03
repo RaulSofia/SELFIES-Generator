@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 
 
-class Gerador:
+class Gerador():
     dados_treino = []
 
     def __init__(self, configs, vocab): #dados é uma instancia de PreProcessador()
@@ -51,6 +51,9 @@ class Gerador:
         text_vocab = str(list(enumerate(self.vocab))).replace(", '", ": ").replace("'), (", "\n")[2:-3]
         with open(os.path.join(dir_path, "vocab.txt"), "w") as vocab_log:
             vocab_log.write(text_vocab)
+
+#    def gera(self, n, max_size):
+        
 
 
     

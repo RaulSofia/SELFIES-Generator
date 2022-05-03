@@ -1,6 +1,7 @@
 from keras.preprocessing.sequence import pad_sequences
 import numpy as np
 from tqdm import tqdm
+#import selfies as sf
 
 class PreProcessador: #claramente ha um problema de memoria quando tentas processar os smiles todos de uma vez. tens que ir um a um ou fazer batches
     padding = False
@@ -17,6 +18,7 @@ class PreProcessador: #claramente ha um problema de memoria quando tentas proces
         smiles = []
         while len(smiles) < self.n_smiles:
             smile = 'G' + file.readline().replace("Br", 'R').replace("Cl", 'C') + 'A'
+            #smile = 'G' + sf.encoder(file.readline()) + 'A'
             if(len(smile) <= self.size):
                 smiles.append(smile)
         return smiles
