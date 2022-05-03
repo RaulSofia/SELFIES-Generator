@@ -36,6 +36,10 @@ def remove_isotopes(smile):
     new_smile = Chem.MolToSmiles(new_mol)
     return(new_smile)
 
+# def parse_smiles(file, number=None):
+#     with open(file, "r") as f:
+
+
 if __name__ == "__main__":
     smile = r"Cn1c(=O)c2c(nc(/C=C/c3cccc(Cl)c3)n2[11CH3])n(C)c1=O"
     new_smile = remove_isotopes(smile)

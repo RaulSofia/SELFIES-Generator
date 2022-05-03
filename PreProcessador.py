@@ -1,3 +1,4 @@
+from io import TextIOWrapper
 from keras.preprocessing.sequence import pad_sequences
 import numpy as np
 from tqdm import tqdm
@@ -7,19 +8,15 @@ class PreProcessador: #claramente ha um problema de memoria quando tentas proces
     file = None
     vocab = None
     
-    def __init__(self, configs):
-        for config in configs:
-            if config == "vocab" and self.vocab != None:
-                continue
-            setattr(self, config, configs[config])
+    def __init__(self, n_smiles=100000, size=100, vocab="auto"):
+        self.n_smiles =n_smiles
+        self.size = size
+        self.vocab = vocab
 
-    def read_smiles(self, file):
-        smiles = []
-        while len(smiles) < self.n_smiles:
-            smile = 'G' + file.readline().replace("Br", 'R').replace("Cl", 'C') + 'A'
-            if(len(smile) <= self.size):
-                smiles.append(smile)
-        return smiles
+    def pre_process_smiles(self, file: TextIOWrapper):
+        smiles = file.read().splitlines()
+        smiles = [s for s in ['G' + smile.replace("Br", 'R').replace("Cl", 'C') + 'A' for smile in tqdm(smiles)] if len(s) <= self.size]
+        return smiles[:self.n_smiles]
 
     def pad(self, encoded_smiles):
         encoded_smiles = pad_sequences(encoded_smiles, value=self.vocab['A'], maxlen=self.size, padding='post')
@@ -47,22 +44,20 @@ class PreProcessador: #claramente ha um problema de memoria quando tentas proces
         return encoded_smiles
     
     def processa(self, dataset):
-        with open("./datasets/" + dataset, 'r', encoding="utf-8") as file:
-            smiles = self.read_smiles(file)
-            smiles = self.encode(smiles)
-            smiles = self.pad(smiles)
-            x_train = smiles
-            y_train = np.transpose(np.append(np.transpose(smiles)[1:], np.full((1, smiles.shape[0]), self.vocab["A"]), axis = 0))
-            #x_train = np.reshape(x_train, (self.n_smiles, self.size, 1))
-            y_train = np.reshape(y_train, (self.n_smiles, self.size))
+        with open("./datasets/" + dataset, 'r', encoding="utf-8") as f:
+            smiles = self.pre_process_smiles(f)
+        smiles = self.encode(smiles)
+        smiles = self.pad(smiles)
+        x_train = smiles
+        y_train = np.transpose(np.append(np.transpose(smiles)[1:], np.full((1, smiles.shape[0]), self.vocab["A"]), axis = 0))
+        #x_train = np.reshape(x_train, (self.n_smiles, self.size, 1))
+        y_train = np.reshape(y_train, (self.n_smiles, self.size))
         #print("xtrain = ", x_train, "ytrain = ", y_train)
         return (x_train, y_train), self.vocab
 
 def main():
-    from utils import get_configs
-    configs = get_configs("CONFIG.csv")
-    reader = PreProcessador(configs)
-    (x_train, y_train), vocab_size = reader.processa('ChEMBL_filtered.txt')
+    reader = PreProcessador(n_smiles=100000, size=100, vocab="auto")
+    (x_train, y_train), vocab = reader.processa('ChEMBL_filtered.txt')
         
 
 

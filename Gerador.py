@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 
 
-class Gerador:
+class Gerador():
     dados_treino = []
 
     def __init__(self, configs, vocab): #dados é uma instancia de PreProcessador()
@@ -20,6 +20,9 @@ class Gerador:
         self.build(vocab)
         self.vocab = vocab
     
+    # def __init__(self, vocab):
+    #     self.vocab = vocab
+
     def build(self, vocab):
         self.model.add(Embedding(input_dim=len(vocab), output_dim=self.embedding_size, input_length=self.size)) #https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
         for i in range(self.layers):

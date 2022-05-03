@@ -1,2 +1,2 @@
 n_smiles,size,vocab,embedding_size,unidades,epochs,batch_size,dropout,optimizer,layers,loss,patience
-100000,100,auto,256,512,1,16,0.2,rms_prop,3,sparse_categorical_crossentropy,5
+10000000,100,auto,256,512,1,16,0.2,rms_prop,3,sparse_categorical_crossentropy,5
