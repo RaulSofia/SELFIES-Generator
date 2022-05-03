@@ -16,7 +16,7 @@ class Gerador(Sequential):
         self.processador = PreProcessador(n_smiles, size, self.vocab)
         (x_train, y_train), self.vocab = self.processador.processa(dataset)
         #checkpoint = ModelCheckpoint()
-        print(y_train.shape)
+        print(x_train[0])
         early_stop = EarlyStopping(monitor='loss', patience=patience)
         callbacks_list = [early_stop]
         super(Gerador, self).fit(x_train, y_train, batch_size=batch_size, epochs=epochs, shuffle=True)#, callbacks=callbacks_list) #TODO
