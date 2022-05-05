@@ -5,18 +5,19 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.callbacks import EarlyStopping
 import os
 from datetime import datetime
-from PreProcessador import PreProcessador
+from Processador import Processador
 
 class Gerador(Sequential):
     def __init__(self, vocab="auto"):
         super(Gerador, self).__init__()
-        self.vocab = vocab
+        self.processador = Processador()
 
-    def fit(self, dataset, n_smiles, size, epochs, batch_size, patience):
-        self.processador = PreProcessador(n_smiles, size, self.vocab)
-        (x_train, y_train), self.vocab = self.processador.processa(dataset)
+    def fit(self, smiles_train, size, epochs, batch_size, patience):
+        self.processador = Processador(size, self.vocab)
+        (x_train, y_train) = self.processador.processa(smiles=smiles_train)
         #checkpoint = ModelCheckpoint()
-        print(x_train[0])
+        #print(x_train[0], y_train[0])
+        x_train = smiles_train
         early_stop = EarlyStopping(monitor='loss', patience=patience)
         callbacks_list = [early_stop]
         super(Gerador, self).fit(x_train, y_train, batch_size=batch_size, epochs=epochs, shuffle=True)#, callbacks=callbacks_list) #TODO
@@ -26,31 +27,16 @@ class Gerador(Sequential):
 
 
 if __name__ == "__main__":
-    # from PreProcessador import PreProcessador
-    # from utils import *
-    # configs = get_configs("CONFIG.csv")
-    # print(configs)
-    
-    # leitor = PreProcessador(configs)
-    # dados, vocab = leitor.processa('ChEMBL_filtered.txt')
-    # print(dados)
     gerador = Gerador()
-    gerador.add(Embedding(input_dim=30, output_dim=256, input_length=100))
+    gerador.add(Embedding(input_dim=32, output_dim=256, input_length=None)) #TODO mesmo que em baixo
     gerador.add(LSTM(512, return_sequences=True, dropout=0.2))
     gerador.add(LSTM(512, return_sequences=True, dropout=0.2))
     gerador.add(LSTM(512, return_sequences=True, dropout=0.2))
-    gerador.add(Dense(30))
+    gerador.add(Dense(32)) #TODO tratar do len(vocab)
     gerador.add(Softmax())
     gerador.compile(optimizer="rmsprop", loss="sparse_categorical_crossentropy", metrics=['accuracy'])
     gerador.summary()
-    #gerador.treina(dados)
-    gerador.fit("ChEMBL_filtered.txt", 10000, 100, 3, 16, 5)
+    gerador.fit("ChEMBL_filtered.txt", 100000, 100, 3, 16, 5)
     gerador.save("teste.ger")
-
     #model.save("teste.ger")
 
-if __name__ == "__main__1":
-    #gerador.summary()
-    gerador = load_model("teste.ger")
-    gerador.summary()
-    print(gerador.vocab)

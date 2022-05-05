@@ -63,12 +63,12 @@ class Gerador():
         
         
 if __name__ == "__main__":
-    from PreProcessador import PreProcessador
+    from Processador import Processador
     from utils import *
     configs = get_configs("CONFIG.csv")
     print(configs)
     
-    leitor = PreProcessador(configs)
+    leitor = Processador(configs)
     dados, vocab = leitor.processa('ChEMBL_filtered.txt')
     print(dados)
     gerador = Gerador(configs, vocab)

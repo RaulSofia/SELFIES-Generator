@@ -1,15 +1,8 @@
-def read_chunk():
-    file = open("teste.txt", "r")
 
-    for line in file:
-        yield line.strip()
+file = open("teste.txt", "r")
+
+print([x.strip() for x in file.read().strip().splitlines() if x.strip()])
+
+file.close()
+
         
-
-
-
-#main
-for buffer in read_chunk():
-    print(buffer)
-    print("-----------------------")
-def fit():
-    pass
